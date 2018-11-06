@@ -25,23 +25,6 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     
     
     var items: [ChecklistItem]
-
-    @IBAction func addItem(_ sender: Any){
-        let newRowIndex = items.count
-        let item = ChecklistItem()
-        
-        var titles = ["Im a title", "Im a new to do", "I like chocolate", "Get it together", "Im tired"]
-        let randomNumber = arc4random_uniform(UInt32(titles.count))
-        let title = titles[Int(randomNumber)]
-        
-        item.text = title
-        item.checked = false
-        items.append(item)
-        
-        let indexPath = IndexPath(row: newRowIndex, section: 0)
-        let indexPaths = [indexPath]
-        tableView.insertRows(at: indexPaths, with: .automatic)
-    }
     
     required init?(coder aDecoder: NSCoder) {
         
@@ -110,7 +93,6 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        
         items.remove(at: indexPath.row)
         let indexPaths = [indexPath]
         tableView.deleteRows(at: indexPaths, with: .automatic)
