@@ -7,71 +7,25 @@
 //
 
 import UIKit
+import Firebase
 
 class ChecklistViewController: UITableViewController, AddItemViewControllerDelegate {
+    let ref = Database.database().reference(withPath: "checklist-items")
+    var items: [ChecklistItem] = []
+    
     func addItemViewController(_ controller: AddItemViewController) {
         navigationController?.popViewController(animated: true)
     }
     
     func addItemViewController(_ controller: AddItemViewController, didFinishAdding item: ChecklistItem) {
-        
         let newRowIndex = items.count
+        let itemRef = self.ref.child(item.text.lowercased())
+        itemRef.setValue(item.toAnyObject())
         items.append(item)
         let indexPath = IndexPath(row: newRowIndex, section: 0)
         let indexPaths = [indexPath]
         tableView.insertRows(at: indexPaths, with: .automatic)
         navigationController?.popViewController(animated: true)
-    }
-    
-    
-    var items: [ChecklistItem]
-    
-    required init?(coder aDecoder: NSCoder) {
-        
-        items = [ChecklistItem]()
-        
-        let row0Item = ChecklistItem()
-        row0Item.text = "Walk the dog"
-        row0Item.checked = false
-        items.append(row0Item)
-        
-        let row1Item = ChecklistItem()
-        row1Item.text = "Brush my teeth"
-        row1Item.checked = false
-        items.append(row1Item)
-        
-        let row2Item = ChecklistItem()
-        row2Item.text = "Learn iOS development"
-        row2Item.checked = false
-        items.append(row2Item)
-        
-        let row3Item = ChecklistItem()
-        row3Item.text = "Soccer pratice"
-        row3Item.checked = false
-        items.append(row3Item)
-        
-        let row4Item = ChecklistItem()
-        row4Item.text = "Eat ice cream"
-        row4Item.checked = false
-        items.append(row4Item)
-        
-        let row5Item = ChecklistItem()
-        row5Item.text = "Get Some Sleep"
-        row5Item.checked = false
-        items.append(row5Item)
-        
-        let row6Item = ChecklistItem()
-        row6Item.text = "Prepare for Job interview"
-        row6Item.checked = false
-        items.append(row6Item)
-        
-        let row7Item = ChecklistItem()
-        row7Item.text = "Relax and watch tv"
-        row7Item.checked = false
-        items.append(row7Item)
-        
-        super.init(coder: aDecoder)
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -85,6 +39,19 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         navigationController?.navigationBar.prefersLargeTitles = true
+
+        ref.observe(.value, with: { snapshot in
+            var newItems: [ChecklistItem] = []
+            for child in snapshot.children {
+                if let snapshot = child as? DataSnapshot,
+                    let newItem = ChecklistItem(snapshot: snapshot) {
+                    newItems.append(newItem)
+                }
+            }
+            self.items = newItems
+            self.tableView.reloadData()
+        })
+
     }
     
     override func didReceiveMemoryWarning() {

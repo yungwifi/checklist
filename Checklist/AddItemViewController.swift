@@ -38,9 +38,8 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
     }
     
     @IBAction func done(){
-        let item = ChecklistItem()
-        item.text = textField.text!
-        item.checked = false
+        let toDo = textField.text
+        let item = ChecklistItem(text: toDo!, checked: false)
         delegate?.addItemViewController(self, didFinishAdding: item)
     }
     
