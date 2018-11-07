@@ -41,14 +41,14 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
         navigationController?.navigationBar.prefersLargeTitles = true
 
         ref.observe(.value, with: { snapshot in
-            var newItems: [ChecklistItem] = []
+            print("CHILD SNAP", snapshot.children)
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot,
                     let newItem = ChecklistItem(snapshot: snapshot) {
-                    newItems.append(newItem)
+                    self.items.append(newItem)
+                    print("SNAPSHOT", snapshot)
                 }
             }
-            self.items = newItems
             self.tableView.reloadData()
         })
 
