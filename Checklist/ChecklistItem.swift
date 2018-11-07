@@ -10,10 +10,12 @@ import Foundation
 import Firebase
 
 class ChecklistItem {
+    var ref: DatabaseReference?
     var text: String!
     var checked: Bool!
     
     init(text: String, checked: Bool) {
+        self.ref = nil
         self.text = text
         self.checked = checked
     }
@@ -26,6 +28,7 @@ class ChecklistItem {
         return nil
         }
         
+        self.ref = snapshot.ref
         self.text = text
         self.checked = checked
     }

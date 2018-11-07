@@ -64,9 +64,10 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        items.remove(at: indexPath.row)
-        let indexPaths = [indexPath]
-        tableView.deleteRows(at: indexPaths, with: .automatic)
+        if editingStyle == .delete {
+            let checklistItem = items[indexPath.row]
+            checklistItem.ref?.removeValue()
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
