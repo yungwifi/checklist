@@ -20,10 +20,14 @@ class ChecklistItem {
     
     init?(snapshot: DataSnapshot) {
         guard
-            let text = snapshot.value as? [String: AnyObject],
-            let checked = snapshot.value as? Bool else {
-                return nil
+            let value = snapshot.value as? [String: AnyObject],
+            let text = value["text"] as? String,
+            let checked = value["checked"] as? Bool else {
+        return nil
         }
+        
+        self.text = text
+        self.checked = checked
     }
     
     func toggleChecked(){
