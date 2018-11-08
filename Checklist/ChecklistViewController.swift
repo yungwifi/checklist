@@ -18,13 +18,9 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     }
     
     func addItemViewController(_ controller: AddItemViewController, didFinishAdding item: ChecklistItem) {
-        let newRowIndex = items.count
         let itemRef = self.ref.child(item.text.lowercased())
         itemRef.setValue(item.toAnyObject())
         items.append(item)
-        let indexPath = IndexPath(row: newRowIndex, section: 0)
-        let indexPaths = [indexPath]
-        tableView.insertRows(at: indexPaths, with: .automatic)
         navigationController?.popViewController(animated: true)
     }
     
@@ -37,30 +33,23 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         navigationController?.navigationBar.prefersLargeTitles = true
-
-        ref.observe(.value, with: { snapshot in
-            var newItems: [ChecklistItem] = []
-            print("CHILD SNAP", snapshot.children)
+        
+        ref.queryOrdered(byChild: "checked").observe(.value, with: { snapshot in
+            var checkedItems: [ChecklistItem] = []
             for child in snapshot.children {
                 if let snapshot = child as? DataSnapshot,
-                    let newItem = ChecklistItem(snapshot: snapshot) {
-                    newItems.append(newItem)
-                    print("SNAPSHOT", snapshot)
+                    let checkedItem = ChecklistItem(snapshot: snapshot) {
+                     checkedItems.append(checkedItem)
                 }
             }
-            
-            self.items = newItems
-            print(self.items)
+            self.items = checkedItems
             self.tableView.reloadData()
         })
-
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -76,9 +65,7 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
-            
             let item = items[indexPath.row]
-            
             item.toggleChecked()
             configureCheckmark(for: cell, with: item)
         }
@@ -88,10 +75,8 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChecklistItem", for: indexPath)
         let item = items[indexPath.row]
-
         configureText(for: cell, with: item)
         configureCheckmark(for: cell, with: item)
-        
         return cell
     }
     
@@ -107,12 +92,5 @@ class ChecklistViewController: UITableViewController, AddItemViewControllerDeleg
             cell.accessoryType = .none
         }
     }
-    
-    
-    
-    
-    
-    
-    
 }
 

@@ -31,7 +31,6 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
     
     weak var delegate: AddItemViewControllerDelegate?
     
-    
     @IBAction func cancel(){
         navigationController?.popViewController(animated: true)
         delegate?.addItemViewController(self)
@@ -53,7 +52,6 @@ class AddItemViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
         let oldText = textField.text!
         let stringRange = Range(range, in: oldText)
         let newText = oldText.replacingCharacters(in: stringRange!, with: string)

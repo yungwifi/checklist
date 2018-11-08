@@ -34,7 +34,7 @@ class ChecklistItem {
     }
     
     func toggleChecked(){
-        checked = !checked
+        self.checked = !self.checked
     }
     
     func toAnyObject() -> Any {
